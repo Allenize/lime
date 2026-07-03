@@ -1,5 +1,3 @@
-// Package proxy implements the HTTP reverse proxy that forwards incoming
-// requests to a backend chosen by the load balancer.
 package proxy
 
 import (
@@ -11,12 +9,10 @@ import (
 	"github.com/YOUR_USERNAME/lime/internal/balancer"
 )
 
-// Handler is an http.Handler that load-balances requests across backends.
 type Handler struct {
 	rr *balancer.RoundRobin
 }
 
-// New creates a proxy Handler backed by the given round-robin balancer.
 func New(rr *balancer.RoundRobin) *Handler {
 	return &Handler{rr: rr}
 }
@@ -40,9 +36,6 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	rp.ServeHTTP(w, r)
 }
 
-// StartHealthChecks periodically pings each backend's /health endpoint and
-// updates its alive status. It runs until the provided stop channel is
-// closed, so call it with `go StartHealthChecks(...)`.
 func StartHealthChecks(rr *balancer.RoundRobin, interval time.Duration, stop <-chan struct{}) {
 	client := &http.Client{Timeout: 2 * time.Second}
 
@@ -61,7 +54,6 @@ func StartHealthChecks(rr *balancer.RoundRobin, interval time.Duration, stop <-c
 		}
 	}
 
-	// Check once immediately so we don't start with false assumptions.
 	check()
 
 	ticker := time.NewTicker(interval)

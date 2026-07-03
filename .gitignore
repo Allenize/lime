@@ -1,4 +1,3 @@
-# Binaries
 /bin/
 /lime
 *.exe
@@ -7,24 +6,18 @@
 *.so
 *.dylib
 
-# Test binary
 *.test
 
-# Go coverage output
 *.out
 
-# Go workspace file
 go.work
 go.work.sum
 
-# Environment/config
 .env
 *.local
 
-# IDE / OS
 .vscode/
 .idea/
 .DS_Store
 
-# Logs
 *.log

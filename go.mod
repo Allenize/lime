@@ -1,3 +1,3 @@
-module github.com/YOUR_USERNAME/lime
+module github.com/Allenize/lime
 
 go 1.22.2

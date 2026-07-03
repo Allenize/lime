@@ -8,8 +8,8 @@
 
 Built by [Allenize](https://github.com/Allenize) · pure standard library · zero dependencies
 
-[![CI](https://github.com/YOUR_USERNAME/lime/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/lime/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/YOUR_USERNAME/lime)](https://goreportcard.com/report/github.com/YOUR_USERNAME/lime)
+[![CI](https://github.com/Allenize/lime/actions/workflows/ci.yml/badge.svg)](https://github.com/Allenize/lime/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Allenize/lime)](https://goreportcard.com/report/github.com/Allenize/lime)
 [![Go Version](https://img.shields.io/badge/Go-1.22-408A71?logo=go&logoColor=white)](https://go.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-285A48?logoColor=white)](./LICENSE)
 
@@ -108,7 +108,7 @@ These are the exact same checks CI runs on every push — running them locally b
 
 <div align="center">
 
-**Built by Allen**
+**Built by Allenize**
 
 [![GitHub](https://img.shields.io/badge/GitHub-YOUR__USERNAME-091413?logo=github&logoColor=white)](https://github.com/Allenize)
 

@@ -1,12 +1,3 @@
-// Command proxy is the entrypoint for the reverse proxy / load balancer.
-//
-// Configure backend servers via the BACKENDS environment variable, a
-// comma-separated list of URLs, e.g.:
-//
-//	BACKENDS="http://localhost:9001,http://localhost:9002" go run ./cmd/proxy
-//
-// If BACKENDS is not set, it defaults to a single local backend on :9001,
-// mainly so `go run ./cmd/proxy` still starts without extra setup.
 package main
 
 import (
@@ -16,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/YOUR_USERNAME/lime/internal/balancer"
-	"github.com/YOUR_USERNAME/lime/internal/proxy"
+	"github.com/Allenize/lime/internal/balancer"
+	"github.com/Allenize/lime/internal/proxy"
 )
 
 func backendList() []string {
