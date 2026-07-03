@@ -6,7 +6,7 @@
 
 **A reverse proxy & load balancer, built from scratch in Go.**
 
-Built by [Allen](https://github.com/YOUR_USERNAME) · pure standard library · zero dependencies
+Built by [Allenize](https://github.com/Allenize) · pure standard library · zero dependencies
 
 [![CI](https://github.com/YOUR_USERNAME/lime/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/lime/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/YOUR_USERNAME/lime)](https://goreportcard.com/report/github.com/YOUR_USERNAME/lime)
@@ -110,6 +110,6 @@ These are the exact same checks CI runs on every push — running them locally b
 
 **Built by Allen**
 
-[![GitHub](https://img.shields.io/badge/GitHub-YOUR__USERNAME-091413?logo=github&logoColor=white)](https://github.com/YOUR_USERNAME)
+[![GitHub](https://img.shields.io/badge/GitHub-YOUR__USERNAME-091413?logo=github&logoColor=white)](https://github.com/Allenize)
 
 </div>
