@@ -6,7 +6,7 @@
 
 **A reverse proxy & load balancer, built from scratch in Go.**
 
-Built by [Allenize](https://github.com/Allenize) · pure standard library · zero dependencies
+Built by [Allen](https://github.com/Allenize) · pure standard library · zero dependencies
 
 [![CI](https://github.com/Allenize/lime/actions/workflows/ci.yml/badge.svg)](https://github.com/Allenize/lime/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Allenize/lime)](https://goreportcard.com/report/github.com/Allenize/lime)
@@ -17,7 +17,7 @@ Built by [Allenize](https://github.com/Allenize) · pure standard library · zer
 
 ---
 
-> **Status:** working reverse proxy with round-robin load balancing and automatic health-check failover.
+> **Status:** feature-complete — round-robin and least-connections load balancing, automatic health-check failover, a live admin dashboard, and optional TLS. Ready to deploy.
 
 ## <img src="docs/assets/icons/layers.svg" width="18" align="center"/> Overview
 
@@ -29,9 +29,9 @@ Lime is a hand-built reverse proxy and load balancer, made to understand — and
 - [x] Reverse proxy request forwarding
 - [x] Load balancing (round robin)
 - [x] Backend health checks (automatic failover)
-- [ ] Least-connections balancing strategy
-- [ ] Simple admin dashboard
-- [ ] TLS support
+- [x] Least-connections balancing strategy
+- [x] Simple admin dashboard
+- [x] TLS support
 
 ## <img src="docs/assets/icons/box.svg" width="18" align="center"/> Project layout
 
@@ -39,8 +39,9 @@ Lime is a hand-built reverse proxy and load balancer, made to understand — and
 lime/
 ├── .github/workflows/ci.yml   # CI: format, vet, build, test on every push
 ├── cmd/lime/main.go           # entrypoint (the binary you run)
-├── internal/balancer/         # load balancing algorithms (round robin, etc.)
+├── internal/balancer/         # load balancing strategies (round robin, least connections)
 ├── internal/proxy/            # reverse proxy / request forwarding logic
+├── internal/admin/            # live admin dashboard + JSON status endpoint
 ├── docs/assets/               # logo + icons used in this README
 ├── Dockerfile                 # containerized build, for free deployment anywhere
 ├── go.mod
@@ -49,15 +50,25 @@ lime/
 
 ## <img src="docs/assets/icons/play.svg" width="18" align="center"/> Run locally
 
-Lime needs at least one backend server to forward traffic to. Configure backends via the `BACKENDS` environment variable (comma-separated URLs):
+Lime needs at least one backend server to forward traffic to. Configure it via environment variables:
+
+| Variable        | Description                                              | Default                    |
+|-----------------|------------------------------------------------------------|-----------------------------|
+| `BACKENDS`      | Comma-separated backend URLs                              | `http://localhost:9001`    |
+| `STRATEGY`      | `round_robin` or `least_conn`                              | `round_robin`               |
+| `PORT`          | Port Lime listens on                                       | `8080`                      |
+| `TLS_CERT_FILE` | Path to a TLS certificate (enables HTTPS if both are set)  | unset                        |
+| `TLS_KEY_FILE`  | Path to the matching TLS private key                       | unset                        |
 
 ```bash
-BACKENDS="http://localhost:9001,http://localhost:9002" go run ./cmd/lime
+BACKENDS="http://localhost:9001,http://localhost:9002" STRATEGY=least_conn go run ./cmd/lime
 ```
 
-If `BACKENDS` isn't set, it defaults to a single backend at `http://localhost:9001`.
+- Visit `http://localhost:8080/health` to confirm Lime itself is up.
+- Visit `http://localhost:8080/admin` for a live dashboard of backend status and active connection counts (auto-refreshes every 5 seconds). A JSON version is available at `/admin/status`.
+- Requests to `http://localhost:8080/` are load-balanced across your configured backends, and unhealthy backends are automatically removed from rotation.
 
-Visit `http://localhost:8080/health` to confirm Lime itself is up. Requests to `http://localhost:8080/` are load-balanced across your configured backends, and unhealthy backends are automatically removed from rotation.
+To enable HTTPS, set `TLS_CERT_FILE` and `TLS_KEY_FILE` to a certificate/key pair — Lime then serves exclusively over TLS.
 
 ## <img src="docs/assets/icons/container.svg" width="18" align="center"/> Run with Docker
 
@@ -78,9 +89,12 @@ Lime reads the `PORT` environment variable (falls back to `8080` locally), which
 6. Under **Advanced**, set:
    - **Health Check Path**: `/health`
    - **Environment Variable**: `BACKENDS` = your comma-separated backend URLs
+   - Optionally: `STRATEGY` = `least_conn` (defaults to `round_robin`)
 7. Click **Create Web Service**
 
 From then on, every `git push` to `main` auto-deploys. Note: free instances spin down after 15 minutes of no traffic and take ~30-60 seconds to wake back up on the next request — fine for a personal project, not for production traffic.
+
+Render automatically provides HTTPS at its edge, so you don't need to set `TLS_CERT_FILE`/`TLS_KEY_FILE` when deploying there — Lime's built-in TLS support is for running it directly on your own server or behind a different host that doesn't terminate TLS for you.
 
 ## <img src="docs/assets/icons/wrench.svg" width="18" align="center"/> Development
 
@@ -108,7 +122,7 @@ These are the exact same checks CI runs on every push — running them locally b
 
 <div align="center">
 
-**Built by Allenize**
+**Built by Allen**
 
 [![GitHub](https://img.shields.io/badge/GitHub-YOUR__USERNAME-091413?logo=github&logoColor=white)](https://github.com/Allenize)
 

@@ -6,23 +6,26 @@ import (
 	"net/http/httputil"
 	"time"
 
-	"github.com/YOUR_USERNAME/lime/internal/balancer"
+	"github.com/Allenize/lime/internal/balancer"
 )
 
 type Handler struct {
-	rr *balancer.RoundRobin
+	b balancer.Balancer
 }
 
-func New(rr *balancer.RoundRobin) *Handler {
-	return &Handler{rr: rr}
+func New(b balancer.Balancer) *Handler {
+	return &Handler{b: b}
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	backend := h.rr.Next()
+	backend := h.b.Next()
 	if backend == nil {
 		http.Error(w, "no healthy backends available", http.StatusBadGateway)
 		return
 	}
+
+	backend.IncConn()
+	defer backend.DecConn()
 
 	rp := httputil.NewSingleHostReverseProxy(backend.URL)
 
@@ -36,21 +39,21 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	rp.ServeHTTP(w, r)
 }
 
-func StartHealthChecks(rr *balancer.RoundRobin, interval time.Duration, stop <-chan struct{}) {
+func StartHealthChecks(b balancer.Balancer, interval time.Duration, stop <-chan struct{}) {
 	client := &http.Client{Timeout: 2 * time.Second}
 
 	check := func() {
-		for _, b := range rr.Backends() {
-			healthURL := b.URL.String() + "/health"
+		for _, backend := range b.Backends() {
+			healthURL := backend.URL.String() + "/health"
 			resp, err := client.Get(healthURL)
 			alive := err == nil && resp.StatusCode == http.StatusOK
 			if resp != nil {
 				resp.Body.Close()
 			}
-			if alive != b.IsAlive() {
-				log.Printf("backend %s alive=%v", b.URL, alive)
+			if alive != backend.IsAlive() {
+				log.Printf("backend %s alive=%v", backend.URL, alive)
 			}
-			b.SetAlive(alive)
+			backend.SetAlive(alive)
 		}
 	}
 
