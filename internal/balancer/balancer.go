@@ -5,12 +5,15 @@ import (
 	"net/url"
 	"sync"
 	"sync/atomic"
+	"time"
 )
 
 type Backend struct {
-	URL   *url.URL
-	Alive atomic.Bool
-	Conns atomic.Int64
+	URL         *url.URL
+	Alive       atomic.Bool
+	Conns       atomic.Int64
+	TotalReqs   atomic.Int64
+	LastChecked atomic.Int64
 }
 
 func (b *Backend) SetAlive(alive bool) {
@@ -23,6 +26,7 @@ func (b *Backend) IsAlive() bool {
 
 func (b *Backend) IncConn() {
 	b.Conns.Add(1)
+	b.TotalReqs.Add(1)
 }
 
 func (b *Backend) DecConn() {
@@ -31,6 +35,18 @@ func (b *Backend) DecConn() {
 
 func (b *Backend) ConnCount() int64 {
 	return b.Conns.Load()
+}
+
+func (b *Backend) TotalRequests() int64 {
+	return b.TotalReqs.Load()
+}
+
+func (b *Backend) MarkChecked() {
+	b.LastChecked.Store(time.Now().UnixMilli())
+}
+
+func (b *Backend) LastCheckedMillis() int64 {
+	return b.LastChecked.Load()
 }
 
 type Balancer interface {

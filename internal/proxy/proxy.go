@@ -54,6 +54,7 @@ func StartHealthChecks(b balancer.Balancer, interval time.Duration, stop <-chan 
 				log.Printf("backend %s alive=%v", backend.URL, alive)
 			}
 			backend.SetAlive(alive)
+			backend.MarkChecked()
 		}
 	}
 
